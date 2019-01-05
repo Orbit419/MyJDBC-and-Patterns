@@ -6,7 +6,7 @@ import mate.academy.myJdbc.model.Project;
 import java.util.Set;
 
 public interface MyUserService {
-    void printSumSalaryForProject(String project);
+    int getSumSalaryForProject(String project);
 
     Set<Developer> getAllDevsOnProject(String project);
 

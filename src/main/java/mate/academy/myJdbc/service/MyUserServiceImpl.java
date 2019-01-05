@@ -13,8 +13,8 @@ public class MyUserServiceImpl implements MyUserService {
         this.myUserDao = myUserDao;
     }
 
-    public void printSumSalaryForProject(String project) {
-        myUserDao.printSumSalaryForProject(project);
+    public int getSumSalaryForProject(String project) {
+        return myUserDao.getSumSalaryForProject(project);
     }
 
     public Set<Developer> getAllDevsOnProject(String project) {

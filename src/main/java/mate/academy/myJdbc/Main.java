@@ -14,7 +14,8 @@ public class Main {
         MyUserDao myUserDao = new MyUserDaoImpl(MyConnectionUtil.getConnection());
         MyUserService myUserService = new MyUserServiceImpl(myUserDao);
 
-        myUserService.printSumSalaryForProject("Astra");
+        System.out.println("Sum of developers salary for project Astra is: "
+                + myUserService.getSumSalaryForProject("Astra"));
 
         System.out.println("All devs on project Astra:");
         Set<Developer> devsOnProject = myUserService.getAllDevsOnProject("Astra");

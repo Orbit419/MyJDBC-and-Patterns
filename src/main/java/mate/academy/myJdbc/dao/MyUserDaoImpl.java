@@ -16,7 +16,7 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
         super(connection);
     }
 
-    public void printSumSalaryForProject(String project) {
+    public int getSumSalaryForProject(String project) {
         String sql = "SELECT projects.project_id, projects.project_name, sum(developers.developer_salary) AS SumSalary\n" +
                 "FROM projects\n" +
                 "JOIN projects_developers ON (projects.project_id = projects_developers.project_id)\n" +
@@ -30,10 +30,11 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
             ResultSet rs = statement.executeQuery(sql);
             if (rs.next()) result = rs.getInt("SumSalary");
 
-            System.out.println("Sum of developers salary for project \"" + project + "\" is: " + result);
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     public Set<Developer> getAllDevsOnProject(String project) {
@@ -48,11 +49,7 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
             Set<Developer> devs = new HashSet<>();
 
             while (rs.next()) {
-                Developer dev = new Developer(
-                        rs.getInt("developer_id"),
-                        rs.getString("developer_name"),
-                        rs.getInt("developer_age"),
-                        rs.getInt("developer_salary"));
+                Developer dev = getDeveloper(rs);
                 devs.add(dev);
             }
             return devs;
@@ -74,11 +71,7 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
             Set<Developer> set = new HashSet<>();
 
             while (rs.next()) {
-                Developer dev = new Developer(
-                        rs.getInt("developer_id"),
-                        rs.getString("developer_name"),
-                        rs.getInt("developer_age"),
-                        rs.getInt("developer_salary"));
+                Developer dev = getDeveloper(rs);
                 set.add(dev);
             }
             return set;
@@ -99,11 +92,7 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
             Set<Developer> set = new HashSet<>();
 
             while (rs.next()) {
-                Developer dev = new Developer(
-                        rs.getInt("developer_id"),
-                        rs.getString("developer_name"),
-                        rs.getInt("developer_age"),
-                        rs.getInt("developer_salary"));
+                Developer dev = getDeveloper(rs);
                 set.add(dev);
             }
             return set;
@@ -136,5 +125,13 @@ public class MyUserDaoImpl extends ConnectionDao implements MyUserDao {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static Developer getDeveloper(ResultSet rs) throws SQLException {
+        Developer developer = new Developer(rs.getInt("developer_id"),
+                rs.getString("developer_name"),
+                rs.getInt("developer_age"),
+                rs.getInt("developer_salary"));
+        return developer;
     }
 }
