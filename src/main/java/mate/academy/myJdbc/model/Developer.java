@@ -1,10 +1,15 @@
 package mate.academy.myJdbc.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Developer {
     private int id;
     private String name;
     private int age;
     private int salary;
+    Set<Skill> skills = new HashSet<>();
+    Set<Project> projects = new HashSet<>();
 
     public Developer(int id, String name, int age, int salary) {
         this.id = id;
@@ -13,7 +18,37 @@ public class Developer {
         this.salary = salary;
     }
 
+    public Developer(String name, int age, int salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+
     public Developer() {
+    }
+
+    public void setSkills(Set<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public void addSkill(Skill skill) {
+        skills.add(skill);
+    }
+
+    public Set<Skill> getSkills() {
+        return skills;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void addProject(Project project) {
+        projects.add(project);
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 
     public int getId() {
@@ -55,6 +90,8 @@ public class Developer {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", salary=" + salary +
+                ", skills=" + skills +
+                ", projects=" + projects +
                 '}';
     }
 }

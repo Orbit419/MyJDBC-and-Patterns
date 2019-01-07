@@ -5,14 +5,16 @@ import mate.academy.myJdbc.model.Project;
 
 import java.util.Set;
 
-public interface MyUserDao {
-    int getSumSalaryForProject(String project);
-
-    Set<Developer> getAllDevsOnProject(String project);
-
+public interface DeveloperDao {
     Set<Developer> getAllJavaDevs();
 
     Set<Developer> getAllMiddleDevs();
 
-    Set<Project> getAllProjects();
+    void addNewDeveloper(Developer developer);
+
+    Developer findDeveloper(int id);
+
+    void updateDeveloper(Developer developer);
+
+    void deleteDeveloper(int id);
 }
