@@ -26,6 +26,7 @@ CREATE TABLE `developing`.`projects` (
   `project_id` INT NOT NULL AUTO_INCREMENT,
   `project_name` VARCHAR(255) NULL,
   `project_cost` INT NULL,
+  `project_birthday` DATE NULL,
   PRIMARY KEY (`project_id`),
   UNIQUE INDEX `project_id_UNIQUE` (`project_id` ASC) VISIBLE)
 ENGINE = InnoDB

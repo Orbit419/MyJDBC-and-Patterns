@@ -20,6 +20,9 @@ public class Project {
         this.countDevs = countDevs;
     }
 
+    public Project() {
+    }
+
     public static class ProjectBuilder {
         private int id;
         private Date birthday;

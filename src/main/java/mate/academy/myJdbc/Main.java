@@ -25,7 +25,7 @@ public class Main {
 //                + projectService.getSumSalaryForProject("Astra"));
 //
 //        System.out.println("All devs on project Astra:");
-//        Set<Developer> devsOnProject = developerService.getAllDevsOnProject("Astra");
+//        Set<Developer> devsOnProject = projectService.getAllDevsOnProject("Astra");
 //        System.out.println(devsOnProject);
 //
 //        System.out.println("All Java devs:");
@@ -37,7 +37,7 @@ public class Main {
 //        System.out.println(middleDevs);
 //
 //        System.out.println("All projects:");
-//        Set<Project> allProjects = developerService.getAllProjects();
+//        Set<Project> allProjects = projectService.getAllProjects();
 //        System.out.println(allProjects);
 
 //        Developer dev = new Developer("Vasya", 25, 7000);
