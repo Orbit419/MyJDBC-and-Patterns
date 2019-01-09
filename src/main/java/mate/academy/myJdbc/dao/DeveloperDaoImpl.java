@@ -58,7 +58,7 @@ public class DeveloperDaoImpl extends AbstractDao implements DeveloperDao {
         return null;
     }
 
-    public void addNewDeveloper(Developer developer) {
+    public int addNewDeveloper(Developer developer) {
         try {
             //insert dev
             PreparedStatement statement = connection.prepareStatement("INSERT INTO developers(developer_name, developer_age, developer_salary) VALUES(?, ?, ?)");
@@ -73,43 +73,16 @@ public class DeveloperDaoImpl extends AbstractDao implements DeveloperDao {
             rs.next();
             int lastDevId = rs.getInt("MAX(developer_id)");
 
-            // insert skill relation
-            for(Skill skill : developer.getSkills()) {
-                statement = connection.prepareStatement("SELECT skill_id FROM skills WHERE skill_branch=? " +
-                        "AND skill_level=?;");
-                statement.setString(1, skill.getBranch());
-                statement.setString(2, skill.getLevel());
-                rs = statement.executeQuery();
-                rs.next();
-                int skillId = rs.getInt("skill_id");
-
-                statement = connection.prepareStatement("INSERT INTO developers_skills VALUES (?, ?);");
-                statement.setInt(1, lastDevId);
-                statement.setInt(2, skillId);
-                statement.execute();
-            }
-
-            //insert project relation
-            for(Project project : developer.getProjects()) {
-                statement = connection.prepareStatement("SELECT project_id FROM projects WHERE project_name=?;");
-                statement.setString(1, project.getName());
-                rs = statement.executeQuery();
-                rs.next();
-                int projectId = rs.getInt("project_id");
-
-                statement = connection.prepareStatement("INSERT INTO projects_developers VALUES (?, ?)");
-                statement.setInt(1, projectId);
-                statement.setInt(2, lastDevId);
-                statement.execute();
-            }
+            return lastDevId;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     public Developer findDeveloper(int id) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT developer_id, developer_name, developer_age"+
+            PreparedStatement statement = connection.prepareStatement("SELECT developer_id, developer_name, developer_age" +
                     ", developer_salary FROM developers WHERE developer_id=?;");
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
@@ -124,7 +97,7 @@ public class DeveloperDaoImpl extends AbstractDao implements DeveloperDao {
                     "HAVING developer_id = ?;");
             statement.setInt(1, id);
             rs = statement.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 Skill skill = new Skill(rs.getInt("skill_id"),
                         rs.getString("skill_branch"),
                         rs.getString("skill_level"));
@@ -155,45 +128,11 @@ public class DeveloperDaoImpl extends AbstractDao implements DeveloperDao {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE developers SET developer_name=?" +
                     ", developer_age=?, developer_salary=? WHERE developer_id=?;");
-            statement.setString(1,developer.getName());
+            statement.setString(1, developer.getName());
             statement.setInt(2, developer.getAge());
             statement.setInt(3, developer.getSalary());
             statement.setInt(4, developer.getId());
             statement.execute();
-
-            //update skills
-            for(Skill skill : developer.getSkills()) {
-                statement = connection.prepareStatement("SELECT skill_id FROM skills WHERE skill_branch=? " +
-                        "AND skill_level=?;");
-                statement.setString(1, skill.getBranch());
-                statement.setString(2, skill.getLevel());
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                int skillId = rs.getInt("skill_id");
-
-                deleteDeveloperSkillRelations(developer.getId());
-
-                statement = connection.prepareStatement("INSERT INTO developers_skills VALUES (?, ?);");
-                statement.setInt(1, developer.getId());
-                statement.setInt(2, skillId);
-                statement.execute();
-            }
-
-            //insert project relation
-            for(Project project : developer.getProjects()) {
-                statement = connection.prepareStatement("SELECT project_id FROM projects WHERE project_name=?;");
-                statement.setString(1, project.getName());
-                ResultSet rs = statement.executeQuery();
-                rs.next();
-                int projectId = rs.getInt("project_id");
-
-                deleteDeveloperProjectRelations(developer.getId());
-
-                statement = connection.prepareStatement("INSERT INTO projects_developers VALUES (?, ?)");
-                statement.setInt(1, projectId);
-                statement.setInt(2, developer.getId());
-                statement.execute();
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -213,16 +152,82 @@ public class DeveloperDaoImpl extends AbstractDao implements DeveloperDao {
 
     }
 
-    private void deleteDeveloperSkillRelations(int id) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM developers_skills WHERE developer_id=?");
-        statement.setInt(1, id);
-        statement.execute();
+    public int getSkillId(Skill skill) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT skill_id FROM skills WHERE skill_branch=? " +
+                    "AND skill_level=?;");
+            statement.setString(1, skill.getBranch());
+            statement.setString(2, skill.getLevel());
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            int skillId = rs.getInt("skill_id");
+
+            return skillId;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
-    private void deleteDeveloperProjectRelations(int id) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM projects_developers WHERE developer_id=?");
-        statement.setInt(1, id);
-        statement.execute();
+    public void insertDevelopersSkillsRelation(int devId, int skillId) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("INSERT INTO developers_skills VALUES (?, ?);");
+            statement.setInt(1, devId);
+            statement.setInt(2, skillId);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getProjectId(Project project) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("SELECT project_id FROM projects WHERE project_name=?;");
+            statement.setString(1, project.getName());
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            int projectId = rs.getInt("project_id");
+            return projectId;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void insertDevelopersProjectsRelation(int projectId, int devId) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("INSERT INTO projects_developers VALUES (?, ?)");
+            statement.setInt(1, projectId);
+            statement.setInt(2, devId);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDeveloperSkillRelations(int id) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("DELETE FROM developers_skills WHERE developer_id=?");
+            statement.setInt(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteDeveloperProjectRelations(int id) {
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("DELETE FROM projects_developers WHERE developer_id=?");
+            statement.setInt(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Developer getDeveloper(ResultSet rs) throws SQLException {
