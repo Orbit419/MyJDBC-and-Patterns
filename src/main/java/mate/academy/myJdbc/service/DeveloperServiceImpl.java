@@ -1,15 +1,16 @@
 package mate.academy.myJdbc.service;
 
 import mate.academy.myJdbc.dao.DeveloperDao;
+import mate.academy.myJdbc.dao.DeveloperDaoImpl;
 import mate.academy.myJdbc.model.Developer;
-import mate.academy.myJdbc.model.Project;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class DeveloperServiceImpl implements DeveloperService {
     private final DeveloperDao developerDao;
 
-    public DeveloperServiceImpl(DeveloperDao developerDao) {
+    public DeveloperServiceImpl(DeveloperDaoImpl developerDao) {
         this.developerDao = developerDao;
     }
 
@@ -23,7 +24,13 @@ public class DeveloperServiceImpl implements DeveloperService {
 
     @Override
     public void addNewDeveloper(Developer developer) {
-        developerDao.addNewDeveloper(developer);
+        int id = developerDao.addNewDeveloper(developer);
+        developer.getSkills().stream()
+                .filter(Objects::nonNull)
+                .forEach(skill -> developerDao.insertDevelopersSkillsRelation(id, developerDao.getSkillId(skill)));
+        developer.getProjects().stream()
+                .filter(Objects::nonNull)
+                .forEach(project -> developerDao.insertDevelopersProjectsRelation(developerDao.getProjectId(project), id));
     }
 
     @Override
@@ -34,6 +41,18 @@ public class DeveloperServiceImpl implements DeveloperService {
     @Override
     public void updateDeveloper(Developer developer) {
         developerDao.updateDeveloper(developer);
+        if (!developer.getSkills().isEmpty()) {
+            developerDao.deleteDeveloperSkillRelations(developer.getId());
+            developer.getSkills().stream()
+                    .filter(Objects::nonNull)
+                    .forEach(skill -> developerDao.insertDevelopersSkillsRelation(developer.getId(), developerDao.getSkillId(skill)));
+        }
+        if (!developer.getProjects().isEmpty()) {
+            developerDao.deleteDeveloperProjectRelations(developer.getId());
+            developer.getProjects().stream()
+                    .filter(Objects::nonNull)
+                    .forEach(project -> developerDao.insertDevelopersProjectsRelation(developerDao.getProjectId(project), developer.getId()));
+        }
     }
 
     @Override

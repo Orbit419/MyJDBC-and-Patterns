@@ -39,24 +39,24 @@ public class Main {
 //        System.out.println("All projects:");
 //        Set<Project> allProjects = projectService.getAllProjects();
 //        System.out.println(allProjects);
-
-//        Developer dev = new Developer("Vasya", 25, 7000);
-//        Skill skill = new Skill("Java", "Junior");
+//
+//        Developer dev = new Developer("Onotole", 50, 3000);
+//        Skill skill = new Skill("Java", "Senior");
 //        dev.addSkill(skill);
 //        Project project = new Project();
 //        project.setName("Astra");
 //        dev.addProject(project);
 //        developerService.addNewDeveloper(dev);
 
-//        Developer dev2 = new Developer(5, "Ivan", 33, 9000);
-//        Skill skill = new Skill("Java", "Senior");
-//        dev2.addSkill(skill);
-//        Project project = new Project();
-//        project.setName("Aqua");
-//        dev2.addProject(project);
-//        developerService.updateDeveloper(dev2);
+        Developer dev2 = new Developer(9, "Tolya", 33, 9000);
+        Skill skill = new Skill("Java", "Middle");
+        dev2.addSkill(skill);
+        Project project = new Project();
+        project.setName("Aqua");
+        dev2.addProject(project);
+        developerService.updateDeveloper(dev2);
 
-//        developerService.deleteDeveloper(6);
+//        developerService.deleteDeveloper(8);
 
 //        Developer findedDeveloper = developerService.findDeveloper(1);
 //        System.out.println(findedDeveloper);
